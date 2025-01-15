@@ -8,8 +8,8 @@ This project implements a Binary Search Tree (BST) to manage a dataset of iPhone
 
 ## How to Run
 1. Clone this repository.
-2. Compile the code using a C++ compiler (e.g., `g++ main.cpp -o bst`).
-3. Run the executable (`./bst`).
+2. Compile the code using a C++ compiler (e.g., `g++ main.cpp -o main`).
+3. Run the executable (`./main`).
 
 ## Limitations
 - Does not handle duplicate iPhone entries.

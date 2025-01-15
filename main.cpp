@@ -161,6 +161,20 @@ int main() {
     return 0;
 }
 */
+void waitForEnter() {
+    cout << "\nPress Enter to go back to the menu...";
+    cin.ignore(); // Clear the input buffer
+    cin.get();    // Wait for Enter key
+}
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls"); // Windows
+#else
+    system("clear"); // Unix/Linux/Mac
+#endif
+}
+
 int main() 
 {
     BST bst;
@@ -175,16 +189,17 @@ int main()
     bst.insert(iphone3);
     bst.insert(iphone4);
 
-    while (true) 
+while (true) 
     {
+        clearScreen(); // Add this to refresh the screen
+
         cout << "\nMenu:\n";
-        cout << "1. Add Iphone\n";
-        cout << "2. Remove Iphone\n";
-        cout << "3. search Iphone\n";
-        cout << "4. print tree\n";
+        cout << "1. Add iPhone\n";
+        cout << "2. Remove iPhone\n";
+        cout << "3. Search iPhone\n";
+        cout << "4. Print Tree\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
-
         int choice;
         cin >> choice;
 
@@ -194,51 +209,59 @@ int main()
 
         switch (choice) 
         {
-        case 1: 
-        {
+        case 1: {
             string serialNumber, name, color, model;
-            cout << "Enter serial number:" << endl;
+            cout << "Enter serial number: ";
             cin >> serialNumber;
-            cout << "Enter Name:" << endl; 
+            cout << "Enter name: ";
             cin >> name;
-            cout << "Enter color:" << endl;
+            cout << "Enter color: ";
             cin >> color;
-            cout << "Enter model:" << endl;
+            cout << "Enter model: ";
             cin >> model;
-            Iphone iphone1(serialNumber, name, color, model);
+            bst.insert(Iphone(serialNumber, name, color, model));
+            cout << "iPhone added successfully!";
+            waitForEnter(); // Pause for Enter key
             break;
         }
-        case 2: 
-        {
+        case 2: {
             string serialNumber;
-            cout << "Enter serial number to retrieve: ";
+            cout << "Enter serial number to remove: ";
             cin >> serialNumber;
             bst.remove(serialNumber);
+            cout << "iPhone removed (if it existed).";
+            waitForEnter(); // Pause for Enter key
             break;
         }
-        case 3: 
-        {
+        case 3: {
             string serialNumber;
-            cout << "Enter serial number to print: " << endl;
+            cout << "Enter serial number to search: ";
             cin >> serialNumber;
             TreeNode* result = bst.search(serialNumber);
-                if (result != nullptr) {
-                    cout << "Found: " << result->data.name << " " << result->data.color << endl;
-                } else {
-                    cout << "Not found!" << endl;
+            if (result != nullptr) {
+                cout << "Found: " << result->data.name << " (" << result->data.color << ", " << result->data.model << ")";
+            } else {
+                cout << "Not found!";
             }
+            waitForEnter(); // Pause for Enter key
             break;
         }
-        case 4: 
-        {
+        case 4: {
+            cout << "Current Inventory:\n";
             bst.printTree();
+            waitForEnter(); // Pause for Enter key
             break;
+        }
+        default:
+            cout << "Invalid choice!";
+            waitForEnter(); // Pause for Enter key
         }
 
-        default:
-            cout << "Invalid choice!" << endl;
-        }
     }
 
     return 0;
 }
+
+
+
+
