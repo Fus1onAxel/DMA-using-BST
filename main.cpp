@@ -1,170 +1,244 @@
 #include <iostream>
 #include <string>
+using namespace std;
 
-struct iPhone {
-    std::string model;
-    std::string color;
-    int storage;
+class Iphone {
+public:
+    string serialNumber;
+    string name;
+    string color;
+    string model;
 
-    iPhone(std::string m, std::string c, int s)
-        : model(m), color(c), storage(s) {}
+    Iphone(string sn, string n, string c, string m)
+        : serialNumber(sn), name(n), color(c), model(m) {}
 
-    bool operator<(const iPhone& other) const {
-        if (model != other.model) return model < other.model;
-        if (color != other.color) return color < other.color;
-        return storage < other.storage;
+    // Comparison operators
+    bool operator<(const Iphone& other) const {
+        return serialNumber < other.serialNumber;
     }
 
-    bool operator==(const iPhone& other) const {
-        return model == other.model && color == other.color && storage == other.storage;
+    bool operator>(const Iphone& other) const {
+        return serialNumber > other.serialNumber;
+    }
+
+    bool operator==(const Iphone& other) const {
+        return serialNumber == other.serialNumber;
     }
 };
 
-struct Node {
-    iPhone data;
-    Node* left;
-    Node* right;
 
-    Node(iPhone d) : data(d), left(nullptr), right(nullptr) {}
+struct TreeNode {
+    Iphone data;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(Iphone val) : data(val), left(nullptr), right(nullptr) {}
 };
 
 class BST {
 private:
-    Node* root;
+    TreeNode* root;
 
-    Node* insert(Node* node, iPhone data) {
-        if (!node) return new Node(data);
-        if (data < node->data)
-            node->left = insert(node->left, data);
-        else if (node->data < data)
-            node->right = insert(node->right, data);
+    // Helper function for insertion
+    TreeNode* insert(TreeNode* node, Iphone iphone) {
+        if (node == nullptr)
+            return new TreeNode(iphone);
+
+        if (iphone < node->data)  // Uses the < operator
+            node->left = insert(node->left, iphone);
+        else if (iphone > node->data)  // Uses the > operator
+            node->right = insert(node->right, iphone);
+
         return node;
     }
 
-    Node* search(Node* node, const iPhone& target) {
-        if (!node || node->data == target)
+    // Helper function for searching
+    TreeNode* search(TreeNode* node, string serialNumber) {
+        if (node == nullptr || node->data.serialNumber == serialNumber)
             return node;
-        if (target < node->data)
-            return search(node->left, target);
-        return search(node->right, target);
+
+        if (serialNumber < node->data.serialNumber)
+            return search(node->left, serialNumber);
+
+        return search(node->right, serialNumber);
     }
 
-    Node* remove(Node* node, const iPhone& target) {
-        if (!node) return node;
+    // Helper function for removal
+    TreeNode* remove(TreeNode* node, string serialNumber) {
+        if (node == nullptr) return node;
 
-        if (target < node->data)
-            node->left = remove(node->left, target);
-        else if (node->data < target)
-            node->right = remove(node->right, target);
+        if (serialNumber < node->data.serialNumber)
+            node->left = remove(node->left, serialNumber);
+        else if (serialNumber > node->data.serialNumber)
+            node->right = remove(node->right, serialNumber);
         else {
-            if (!node->left) {
-                Node* temp = node->right;
+            if (node->left == nullptr) {
+                TreeNode* temp = node->right;
                 delete node;
                 return temp;
-            } else if (!node->right) {
-                Node* temp = node->left;
+            }
+            else if (node->right == nullptr) {
+                TreeNode* temp = node->left;
                 delete node;
                 return temp;
             }
 
-            Node* temp = findMin(node->right);
+            TreeNode* temp = minValueNode(node->right);
             node->data = temp->data;
-            node->right = remove(node->right, temp->data);
+            node->right = remove(node->right, temp->data.serialNumber);
         }
+
         return node;
     }
 
-    Node* findMin(Node* node) {
-        while (node->left) node = node->left;
-        return node;
+    // Helper function to find the minimum value node
+    TreeNode* minValueNode(TreeNode* node) {
+        TreeNode* current = node;
+        while (current && current->left != nullptr)
+            current = current->left;
+        return current;
     }
 
-    void inOrderTraversal(Node* node) {
-        if (!node) return;
-        inOrderTraversal(node->left);
-        std::cout << "Model: " << node->data.model
-                  << ", Color: " << node->data.color
-                  << ", Storage: " << node->data.storage << "GB\n";
-        inOrderTraversal(node->right);
+    // Helper function to print the tree in-order
+    void inorder(TreeNode* root) {
+        if (root != nullptr) {
+            inorder(root->left);
+            cout << root->data.serialNumber << " - " << root->data.name << " - " << root->data.color << " - " << root->data.model << endl;
+            inorder(root->right);
+        }
     }
 
 public:
     BST() : root(nullptr) {}
 
-    void insert(iPhone data) { root = insert(root, data); }
-    Node* search(const iPhone& target) { return search(root, target); }
-    void remove(const iPhone& target) { root = remove(root, target); }
-    void display() { 
-        if (!root) std::cout << "No iPhones in the inventory.\n";
-        else inOrderTraversal(root); 
+    void insert(Iphone iphone) {
+        root = insert(root, iphone);
+    }
+
+    TreeNode* search(string serialNumber) {
+        return search(root, serialNumber);
+    }
+
+    void remove(string serialNumber) {
+        root = remove(root, serialNumber);
+    }
+
+    void printTree() {
+        inorder(root);
     }
 };
-
-void displayMenu() {
-    std::cout << "\n=== iPhone Inventory Menu ===\n";
-    std::cout << "1. Add iPhone\n";
-    std::cout << "2. Search for iPhone\n";
-    std::cout << "3. Remove iPhone\n";
-    std::cout << "4. Display all iPhones\n";
-    std::cout << "5. Exit\n";
-    std::cout << "Enter your choice: ";
-}
-
+/*
 int main() {
-    BST iphoneTree;
-    int choice;
+    BST bst;
 
-    do {
-        displayMenu();
-        std::cin >> choice;
+    Iphone iphone1("SN123", "iPhone 12", "Black", "A2172");
+    Iphone iphone2("SN456", "iPhone 13", "Blue", "A2633");
+    Iphone iphone3("SN789", "iPhone 14", "Red", "A2634");
+    Iphone iphone4("SN101", "iPhone 11", "White", "A2223");
 
-        if (choice == 1) {
-            std::string model, color;
-            int storage;
-            std::cout << "Enter model: ";
-            std::cin >> model;
-            std::cout << "Enter color: ";
-            std::cin >> color;
-            std::cout << "Enter storage (GB): ";
-            std::cin >> storage;
-            iphoneTree.insert({model, color, storage});
-            std::cout << "iPhone added successfully!\n";
-        } else if (choice == 2) {
-            std::string model, color;
-            int storage;
-            std::cout << "Enter model: ";
-            std::cin >> model;
-            std::cout << "Enter color: ";
-            std::cin >> color;
-            std::cout << "Enter storage (GB): ";
-            std::cin >> storage;
-            Node* found = iphoneTree.search({model, color, storage});
-            if (found)
-                std::cout << "Found: " << found->data.model << ", " 
-                          << found->data.color << ", " 
-                          << found->data.storage << "GB\n";
-            else
-                std::cout << "iPhone not found.\n";
-        } else if (choice == 3) {
-            std::string model, color;
-            int storage;
-            std::cout << "Enter model: ";
-            std::cin >> model;
-            std::cout << "Enter color: ";
-            std::cin >> color;
-            std::cout << "Enter storage (GB): ";
-            std::cin >> storage;
-            iphoneTree.remove({model, color, storage});
-            std::cout << "iPhone removed (if it existed).\n";
-        } else if (choice == 4) {
-            std::cout << "Current inventory:\n";
-            iphoneTree.display();
-        } else if (choice == 5) {
-            std::cout << "Exiting program.\n";
-        } else {
-            std::cout << "Invalid choice. Try again.\n";
+    bst.insert(iphone1);
+    bst.insert(iphone2);
+    bst.insert(iphone3);
+    bst.insert(iphone4);
+
+    cout << "BST In-Order Traversal (Before Removal):" << endl;
+    bst.printTree();
+
+    cout << "\nSearching for iPhone with Serial Number SN456:" << endl;
+    TreeNode* result = bst.search("SN456");
+    if (result != nullptr) {
+        cout << "Found: " << result->data.name << " " << result->data.color << endl;
+    } else {
+        cout << "Not found!" << endl;
+    }
+
+    cout << "\nRemoving iPhone with Serial Number SN123:" << endl;
+    bst.remove("SN123");
+
+    cout << "\nBST In-Order Traversal (After Removal):" << endl;
+    bst.printTree();
+
+    return 0;
+}
+*/
+int main() 
+{
+    BST bst;
+
+    Iphone iphone1("SN123", "iPhone 12", "Black", "A2172");
+    Iphone iphone2("SN456", "iPhone 13", "Blue", "A2633");
+    Iphone iphone3("SN789", "iPhone 14", "Red", "A2634");
+    Iphone iphone4("SN101", "iPhone 11", "White", "A2223");
+
+    bst.insert(iphone1);
+    bst.insert(iphone2);
+    bst.insert(iphone3);
+    bst.insert(iphone4);
+
+    while (true) 
+    {
+        cout << "\nMenu:\n";
+        cout << "1. Add Iphone\n";
+        cout << "2. Remove Iphone\n";
+        cout << "3. search Iphone\n";
+        cout << "4. print tree\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+
+        int choice;
+        cin >> choice;
+
+
+        if (choice == 5)
+            break;
+
+        switch (choice) 
+        {
+        case 1: 
+        {
+            string serialNumber, name, color, model;
+            cout << "Enter serial number:" << endl;
+            cin >> serialNumber;
+            cout << "Enter Name:" << endl; 
+            cin >> name;
+            cout << "Enter color:" << endl;
+            cin >> color;
+            cout << "Enter model:" << endl;
+            cin >> model;
+            Iphone iphone1(serialNumber, name, color, model);
+            break;
         }
-    } while (choice != 5);
+        case 2: 
+        {
+            string serialNumber;
+            cout << "Enter serial number to retrieve: ";
+            cin >> serialNumber;
+            bst.remove(serialNumber);
+            break;
+        }
+        case 3: 
+        {
+            string serialNumber;
+            cout << "Enter serial number to print: " << endl;
+            cin >> serialNumber;
+            TreeNode* result = bst.search(serialNumber);
+                if (result != nullptr) {
+                    cout << "Found: " << result->data.name << " " << result->data.color << endl;
+                } else {
+                    cout << "Not found!" << endl;
+            }
+            break;
+        }
+        case 4: 
+        {
+            bst.printTree();
+            break;
+        }
+
+        default:
+            cout << "Invalid choice!" << endl;
+        }
+    }
 
     return 0;
 }
