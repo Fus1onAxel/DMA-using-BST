@@ -10,6 +10,10 @@ void waitForEnter() {
     cin.get();    // Wait for Enter key
 }
 
+void waitForEnter1() {
+    cout << "\nPress Enter to go back to the menu...";
+    cin.get();    // Wait for Enter key
+}
 void clearScreen() {
 #ifdef _WIN32
     system("cls"); // Windows

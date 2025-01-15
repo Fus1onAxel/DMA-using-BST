@@ -4,11 +4,6 @@
 int main() {
     BST bst;
 
-    bst.insert(Iphone("SN123", "iPhone 12", "Black", "A2172"));
-    bst.insert(Iphone("SN456", "iPhone 13", "Blue", "A2633"));
-    bst.insert(Iphone("SN789", "iPhone 14", "Red", "A2634"));
-    bst.insert(Iphone("SN101", "iPhone 11", "White", "A2223"));
-
     while (true) {
         clearScreen(); // Refresh the screen before displaying the menu
 
@@ -16,7 +11,7 @@ int main() {
         cout << "1. Add iPhone\n";
         cout << "2. Remove iPhone\n";
         cout << "3. Search iPhone\n";
-        cout << "4. Print Tree\n";
+        cout << "4. Print Inventory\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
 
@@ -27,24 +22,25 @@ int main() {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input! Please enter a number between 1 and 5.";
-            waitForEnter();
+            waitForEnter1();
             continue;
         }
 
         switch (choice) {
         case 1: {
             string serialNumber, name, color, model;
+            cin.ignore(); // Clear the input buffer to handle leftover '\n'
             cout << "Enter serial number: ";
-            cin >> serialNumber;
+            getline(cin, serialNumber);
             cout << "Enter name: ";
-            cin >> name;
+            getline(cin, name);
             cout << "Enter color: ";
-            cin >> color;
+            getline(cin, color);
             cout << "Enter model: ";
-            cin >> model;
+            getline(cin, model);
             bst.insert(Iphone(serialNumber, name, color, model));
             cout << "iPhone added successfully!";
-            waitForEnter();
+            waitForEnter1();
             break;
         }
         case 2: {
@@ -53,7 +49,7 @@ int main() {
             cin >> serialNumber;
             bst.remove(serialNumber);
             cout << "iPhone removed (if it existed).";
-            waitForEnter();
+            waitForEnter1();
             break;
         }
         case 3: {
@@ -66,20 +62,20 @@ int main() {
             } else {
                 cout << "Not found!";
             }
-            waitForEnter();
+            waitForEnter1();
             break;
         }
         case 4: {
             cout << "Current Inventory:\n";
             bst.printTree();
-            waitForEnter();
+            waitForEnter1();
             break;
         }
         case 5:
             return 0;
         default:
             cout << "Invalid choice! Please enter a number between 1 and 5.";
-            waitForEnter();
+            waitForEnter1();
         }
     }
 
